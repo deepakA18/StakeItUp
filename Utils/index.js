@@ -1,5 +1,3 @@
-
-
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
 import { STAKING_CONTRACTS, ERC20Token_ABI, ERC20Token_ADDRESS } from "../Context/constants";
@@ -49,8 +47,8 @@ export const connectingWithContract = async (contractKey) => {
     const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
 
-    const { address, abi } = STAKING_CONTRACTS[contractKey];
-    const contract = fetchContract(address, abi, signer);
+    const { address } = STAKING_CONTRACTS[contractKey];
+    const contract = fetchContract(address, STAKING_CONTRACTS.abi, signer);
     
     return contract;
   } catch (error) {

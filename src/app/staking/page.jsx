@@ -22,18 +22,71 @@ import {
 } from "@/components/ui/select"
 
 import { useContract } from '../../../Context/index'
+import { notification } from "antd";
 
 
 
 const Page = () => {
 
-  const {handleContractChange} = useContract();
+  const {
+    handleContractChange,
+    stakeTokens,
+    unstakeTokens,
+    claimRewards,
+    lockPeriod,
+    extendedLockOnRegistration,
+    earlyUnstakeFee,
+    balance,
+    minStakingAmount,
+    maxStakingAmount,
+    status,
+    additionalRewards,
+    totalValueLocked,
+    userLockedTokens,
+    apy,
+    numberOfStakers,
+    timeLeft,
+    getStakingStatus,
+    userDetails
+
+  } = useContract();
 
   const handleSelectChange = (e) => {
-    handleContractChange(e.target.value);
+    console.log(e);
+    handleContractChange(e);
   };
 
-  
+  const [stakeAmount, setStakeAmount] = useState('');
+  const [unstakeAmount, setUnstakeAmount] = useState('');
+  const [rewardAmount, setRewardAmount] = useState('');
+
+  const handleStake = async (e) => {
+    e.preventDefault();
+    try {
+      const stakingStatus = getStakingStatus();
+      if (stakingStatus === 'Staking period ended') {
+        throw new Error('Staking period has ended');
+      }
+      await stakeTokens(stakeAmount);
+    } catch (err) {
+      notification.info(
+        {
+          message: "Staking period has ended!"
+        }
+      )
+    }
+    
+  };
+
+  const handleUnstake = async (e) => {
+    e.preventDefault();
+    await unstakeTokens(unstakeAmount);
+  };
+
+  const handleClaimRewards = async (e) => {
+    e.preventDefault();
+    await claimRewards();
+  };
 
   return (
     <div className="flex">
@@ -48,42 +101,42 @@ const Page = () => {
         <ul className="space-y-2">
           <li>
             <strong>Lock Period:</strong>
-            <span>{}</span>
+            <span>{lockPeriod?.toString()}</span>
           </li>
           <li>
             <strong>Extended Lock on Registration:</strong>
-            <span>{}</span>
+            <span>{extendedLockOnRegistration?.toString()}</span>
           </li>
           <li>
             <strong>Early Unstake Fee:</strong>
-            <span>{}</span>
+            <span>{earlyUnstakeFee?.toString()}</span>
           </li>
           <li>
             <strong>Mini Staking Amount:</strong>
-            <span>{}</span>
+            <span>{minStakingAmount?.toString()}</span>
           </li>
           <li>
             <strong>Maximum Staking Amount:</strong>
-            <span>{}</span>
+            <span>{maxStakingAmount?.toString()}</span>
           </li>
           <li>
             <strong>Status</strong>
-            <span>{}</span>
+            <span>{status?.toString()}</span>
           </li>
           <li>
             <strong>Additional Rewards</strong>
-            <span>{}</span>
+            <span>{additionalRewards?.toString()}</span>
           </li>
         
         </ul>
         </div>
         <div className="text-3xl font-medium flex ml-40">
-          <span>{}</span>
-          <span>{}</span>
+          <span>{apy?.toString()}</span>
+          <span>APY*</span>
         </div>
         </div>
         <div className="mt-7 text-xl font-semibold">
-          <p>Balance: {}</p>
+          <p>Balance: {balance?.toString()}</p>
         </div>
         <form className="mt-5">
           <div className="grid w-full items-center gap-y-8">
@@ -93,32 +146,33 @@ const Page = () => {
                   <SelectValue placeholder="Staking Period" />
                 </SelectTrigger>
                 <SelectContent position="popper">
-                  <SelectItem value="sevendays">7 Days</SelectItem>
-                  <SelectItem value="tendays">10 Days</SelectItem>
-                  <SelectItem value="thirtydays">30 Days</SelectItem>
-                  <SelectItem value="ninetydays">90 Days</SelectItem>
+                  <SelectItem value="sevenDays">7 Days</SelectItem>
+                  <SelectItem value="tenDays">10 Days</SelectItem>
+                  <SelectItem value="thirtyDays">30 Days</SelectItem>
+                  <SelectItem value="ninetyDays">90 Days</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex flex-row">
-              <Input type="Number" id="stake" placeholder="Amount to Stake" />
+              <Input type="Number" id="stake" placeholder="Amount to Stake" value={stakeAmount}
+                  onChange={(e) => setStakeAmount(e.target.value)}/>
               <div className="ml-2">
-              <Button>Stake</Button>
+              <Button onClick={handleStake}>Stake</Button>
               </div>
               
             </div>
             <div className="flex flex-row">
               
-              <Input type="Number" id="withdraw" placeholder="Amount to Withdraw" />
+              <Input type="Number" id="withdraw" placeholder="Amount to Withdraw" value={unstakeAmount} onChange={(e)=> setUnstakeAmount(e.target.value)} />
               <div className="ml-2">
-              <Button>Withdraw</Button>
+              <Button onClick={handleUnstake}>Withdraw</Button>
               </div>
             </div>
             <div className="flex flex-row">
               
-              <Input type="Number" id="reward" placeholder="Amount of Reward" />
+              <Input type="Number" id="reward" placeholder="Amount of Reward" value={rewardAmount} onChange={(e)=>{e.target.value}} />
               <div className="ml-2">
-              <Button>Reward</Button>
+              <Button onClick={handleClaimRewards}>Reward</Button>
               </div>
             </div>
            
@@ -132,23 +186,23 @@ const Page = () => {
     <div className="ml-28">
         <div className="mt-10 w-80">
           <div className=" bg-indigo-600 text-white rounded-xl p-8 mb-7 w-full text-center">
-            <h3 className="text-2xl font-medium">1000 SHN</h3>
+            <h3 className="text-2xl font-medium">{totalValueLocked?.toString()}</h3>
             <p className="mt-2">Total Value Locked</p>
           </div>
           <div className="bg-indigo-600 text-white rounded-xl p-8 mb-7 w-full text-center">
-            <h3 className="text-2xl font-medium">1000 SHN</h3>
+            <h3 className="text-2xl font-medium">{userDetails.stakeAmount?.toString()}</h3>
             <p className="mt-2">Your Locked Token</p>
           </div>
           <div className="bg-indigo-600 text-white rounded-xl p-8 mb-7 w-full text-center">
-            <h3 className="text-2xl font-medium">20%</h3>
+            <h3 className="text-2xl font-medium">{apy?.toString()}</h3>
             <p className="mt-2">APY</p>
           </div>
           <div className="bg-indigo-600 text-white rounded-xl p-8 mb-7 w-full text-center">
-            <h3 className="text-2xl font-medium">24</h3>
+            <h3 className="text-2xl font-medium">{numberOfStakers?.toString()}</h3>
             <p className="mt-2">Number of Stakers</p>
           </div>
           <div className="bg-indigo-600 text-white rounded-xl p-8 w-full text-center">
-            <h3 className="text-2xl font-medium">3:00:00</h3>
+            <h3 className="text-2xl font-medium">{timeLeft?.toString()}</h3>
             <p className="mt-2">Time Left, Hurry Up!</p>
           </div>
         </div>
