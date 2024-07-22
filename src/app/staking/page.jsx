@@ -52,7 +52,7 @@ const Page = () => {
 
   const [stakeAmount, setStakeAmount] = useState('');
   const [unstakeAmount, setUnstakeAmount] = useState('');
-  const [rewardAmount, setRewardAmount] = useState('');
+  // const [rewardAmount, setRewardAmount] = useState('');
 
   const handleStake = async (e) => {
     e.preventDefault();
@@ -173,7 +173,7 @@ const Page = () => {
                 <Button onClick={handleUnstake} className="mt-4 md:mt-0 md:ml-2 w-full md:w-auto">Withdraw</Button>
               </div>
               <div className="flex flex-col md:flex-row items-center">
-                <Input type="number" id="reward" placeholder="Amount of Reward" value={rewardAmount} onChange={(e) => setRewardAmount(e.target.value)} className="w-full md:w-auto"/>
+                {/* <Input type="number" id="reward" placeholder="Amount of Reward" value={rewardAmount} onChange={(e) => setRewardAmount(e.target.value)} className="w-full md:w-auto"/> */}
                 <Button onClick={handleClaimRewards} className="mt-4 md:mt-0 md:ml-2 w-full md:w-auto">Reward</Button>
               </div>
             </div>
