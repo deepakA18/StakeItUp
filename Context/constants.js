@@ -3,7 +3,7 @@ import StakingContract from "./TokenStaking.json";
 
 export const STAKING_CONTRACTS = {
     sevenDays: {
-        address: "0x1BE7B03db0966fcBCe1b0B898c57DDeE46a21Ac0"
+        address: "0x648a7E9A6c22d816EA66Dce56e4e3a578D7534C1"
     },
     tenDays: {
         address: ""

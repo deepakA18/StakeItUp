@@ -12,28 +12,30 @@ const ContractContext = createContext();
 export const useContract = () => useContext(ContractContext);
 
 export const ContractProvider = ({ children }) => {
+
+
+  const [isLoading, setIsLoading] = useState(true);
+
   const [provider, setProvider] = useState(null);
-  const [signer, setSigner] = useState(null);
   const [stakingContract, setStakingContract] = useState(null);
   const [tokenContract, setTokenContract] = useState(null);
   const [account, setAccount] = useState(null);
-  const [balance, setBalance] = useState();
+  const [balance, setBalance] = useState({ raw: null, formatted: "0" });
   const [selectedContractKey, setSelectedContractKey] = useState('sevenDays');
 
-  const [lockPeriod, setLockPeriod] = useState(null);
-  const [extendedLockOnRegistration, setExtendedLockOnRegistration] = useState(null);
-  const [earlyUnstakeFee, setEarlyUnstakeFee] = useState(null);
-  const [minStakingAmount, setMinStakingAmount] = useState(null);
-  const [maxStakingAmount, setMaxStakingAmount] = useState(null);
-  const [status, setStatus] = useState(null);
-  const [additionalRewards, setAdditionalRewards] = useState(null);
-  const [totalValueLocked, setTotalValueLocked] = useState(null);
-  const [userLockedTokens, setUserLockedTokens] = useState(null);
-  const [apy, setApy] = useState(null);
-  const [numberOfStakers, setNumberOfStakers] = useState(null);
+  const [lockPeriod, setLockPeriod] = useState("0");
+  const [earlyUnstakeFee, setEarlyUnstakeFee] = useState("0");
+  const [minStakingAmount, setMinStakingAmount] = useState({ raw: null, formatted: "0" });
+  const [maxStakingAmount, setMaxStakingAmount] = useState({ raw: null, formatted: "0" });
+  const [status, setStatus] = useState("NA");
+  const [additionalRewards, setAdditionalRewards] = useState({ raw: null, formatted: "0" });
+  const [totalValueLocked, setTotalValueLocked] = useState({ raw: null, formatted: "0" });
+  const [userLockedTokens, setUserLockedTokens] = useState({ raw: null, formatted: "0" });
+  const [apy, setApy] = useState("0");
+  const [numberOfStakers, setNumberOfStakers] = useState("0");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(null);
+  const [timeLeft, setTimeLeft] = useState("...Loading");
   const [userDetails, setUserDetails] = useState({
     stakeAmount: null,
     rewardAmount: null,
@@ -42,6 +44,19 @@ export const ContractProvider = ({ children }) => {
     rewardsClaimedSoFar: null,
   });
 
+  const formatLargeNumber = (value, decimals = 18) => {
+    if (!value) return "0";
+    let formattedValue;
+    if (typeof value === 'object' && value._isBigNumber) {
+      formattedValue = ethers.utils.formatUnits(value, decimals);
+    } else if (typeof value === 'string' || typeof value === 'number') {
+      formattedValue = value.toString();
+    } else {
+      return "0";
+    }
+    return parseFloat(formattedValue).toFixed(2);
+  };
+
   const formatTimeLeft = (timeLeft) => {
     console.log("format time left",timeLeft)
     return timeLeft
@@ -49,21 +64,19 @@ export const ContractProvider = ({ children }) => {
       : 'Staking period ended';
   }
   
-  const getStakingStatus =  (startDate,endDate) => {
+  const getStakingStatus = (startDate = new Date(), endDate = new Date()) => {
     const currentDate = new Date();
-    console.log(endDate)
-    console.log(startDate)
     if (currentDate < startDate) {
-      return 'Staking starts in ' + formatTimeLeft();
+      return 'Inactive';
     } else if (currentDate > startDate && currentDate < endDate) {
-      return 'Active - Time left: ' + formatTimeLeft();
+      return 'Active';
     } else {
       return 'Staking period ended';
     }
-  }
-
+  };
 
   const loadContractData = async (contractKey) => {
+    setIsLoading(true);
     try {
       const connectedAccount = await CheckIfWalletConnected();
       console.log("account", connectedAccount);
@@ -80,7 +93,7 @@ export const ContractProvider = ({ children }) => {
         console.log("Token Contract", tokenContract);
         setTokenContract(tokenContract);
         const balance = await tokenContract.balanceOf(connectedAccount);
-        setBalance(balance);
+        setBalance({ raw: balance, formatted: formatLargeNumber(balance) });
 
         const stakingContract = await connectingWithContract(contractKey);
         setStakingContract(stakingContract);
@@ -88,11 +101,11 @@ export const ContractProvider = ({ children }) => {
 
         const user = await stakingContract.getUser(connectedAccount);
         setUserDetails({
-          stakeAmount: ethers.utils.formatEther(user.stakeAmount.toString()),
-          rewardAmount: ethers.utils.formatEther(user.rewardAmount.toString()),
+          stakeAmount: { raw: user.stakeAmount, formatted: formatLargeNumber(user.stakeAmount) },
+          rewardAmount: { raw: user.rewardAmount, formatted: formatLargeNumber(user.rewardAmount) },
           lastStakeTime: new Date(user.lastStakeTime * 1000).toLocaleString(),
           lastRewardCalculationTime: new Date(user.lastRewardCalculationTime * 1000).toLocaleString(),
-          rewardsClaimedSoFar: ethers.utils.formatEther(user.rewardsClaimedSoFar.toString()),
+          rewardsClaimedSoFar: { raw: user.rewardsClaimedSoFar, formatted: formatLargeNumber(user.rewardsClaimedSoFar) },
         });
 
         const lockPeriod = await stakingContract.getStakeDays();
@@ -103,20 +116,23 @@ export const ContractProvider = ({ children }) => {
         setEarlyUnstakeFee(earlyUnstakeFee);
 
         const minStakingAmount = await stakingContract.getMinimumStakingAmount();
-        setMinStakingAmount(minStakingAmount);
+        console.log("Max staking amount:", ethers.utils.formatEther(minStakingAmount));
+        setMinStakingAmount({ raw: minStakingAmount, formatted: formatLargeNumber(minStakingAmount) });
 
         const maxStakingAmount = await stakingContract.getMaxStakingTokenLimit();
-        setMaxStakingAmount(maxStakingAmount);
+        console.log("Max staking amount:", ethers.utils.formatEther(maxStakingAmount));
+        setMaxStakingAmount({ raw: maxStakingAmount, formatted: formatLargeNumber(maxStakingAmount) });
 
         
 
         const additionalRewards = await stakingContract.getUserEstimatedRewards();
-        setAdditionalRewards(additionalRewards);
+        setAdditionalRewards({ raw: additionalRewards, formatted: formatLargeNumber(additionalRewards,13) });
 
         const totalValueLocked = await stakingContract.getTotalStakeTokens();
-        setTotalValueLocked(totalValueLocked);
+        console.log("Total value locked:", ethers.utils.formatEther(totalValueLocked));
+        setTotalValueLocked({ raw: totalValueLocked, formatted: formatLargeNumber(totalValueLocked) });
 
-        setUserLockedTokens(user.stakeAmount);
+        setUserLockedTokens({ raw: user.stakeAmount, formatted: formatLargeNumber(user.stakeAmount) });
 
         const apy = await stakingContract.getAPY();
         setApy(apy);
@@ -134,9 +150,9 @@ export const ContractProvider = ({ children }) => {
         // setEndDate(new Date(endDate * 1000));
         const endDate = new Date(contractEndDate * 1000)
         console.log(endDate)
-        
-
-        calculateTimeLeft(contractEndDate);
+        setEndDate(contractEndDate);
+        setIsLoading(false);
+        // calculateTimeLeft(contractEndDate);
 
         const status = getStakingStatus(startDate,endDate);
         setStatus(status);
@@ -149,15 +165,29 @@ export const ContractProvider = ({ children }) => {
       }
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
     }
   }
 
   useEffect(() => {
-   
-      loadContractData(selectedContractKey);
-     
-    
+    loadContractData(selectedContractKey);
   }, [selectedContractKey]);
+
+  useEffect(() => {
+    console.log("endDate changed:", endDate ? endDate.toString() : "null");
+    if (!endDate) return;
+
+    const updateTimeLeft = () => {
+      const timeLeftFormatted = calculateTimeLeft(endDate);
+      setTimeLeft(timeLeftFormatted);
+    };
+
+    updateTimeLeft(); // Initial update
+    const timer = setInterval(updateTimeLeft, 1000);
+
+    return () => clearInterval(timer);
+  }, [endDate]);
+  
 
   const handleContractChange = async (contractKey) => {
     setSelectedContractKey(contractKey);
@@ -166,12 +196,21 @@ export const ContractProvider = ({ children }) => {
 
   const stakeTokens = async (amount) => {
     if (stakingContract) {
-      await approveTokenSpend(amount);
-      const tx = await stakingContract.stake(ethers.utils.parseUnits(amount, 18));
-      console.log("Transaction", tx);
-      await tx.wait();
-      saveTransaction('stake', amount);
+      try {
+        await approveTokenSpend(amount);
+        const tx = await stakingContract.stake(ethers.utils.parseUnits(amount, 18));
+        await tx.wait();
+        saveTransaction('stake', amount);
+        return { success: true };
+      } catch (error) {
+        console.error("Staking error:", error);
+        if (error.message.includes('max staking token limit reached')) {
+          return { success: false, error: 'Maximum staking token limit has been reached.' };
+        }
+        return { success: false, error: error.message };
+      }
     }
+    return { success: false, error: "Staking contract not initialized" };
   };
 
   const unstakeTokens = async (amount) => {
@@ -207,55 +246,53 @@ export const ContractProvider = ({ children }) => {
   };
 
   const calculateTimeLeft = (endDate) => {
-    console.log(endDate)
     const newEndDate = endDate.toNumber() * 1000;
-    const  now = Date.now()
-    console.log(now)
-    const difference =  newEndDate - now;
-    // const diffDate = new Date(difference)
-  
+    const now = Date.now();
+    const difference = newEndDate - now;
     console.log(difference)
-    let timeLeft = {};
-
+  
     if (difference > 0) {
-      timeLeft = {
+      const timeLeft = {
         days: Math.floor(difference / (1000 * 60 * 60 * 24)),
         hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
         minutes: Math.floor((difference / 1000 / 60) % 60),
         seconds: Math.floor((difference / 1000) % 60),
       };
+      console.log(timeLeft)
+      return formatTimeLeft(timeLeft);
+    } else {
+      return 'Staking period ended';
     }
+  };
 
-    const formattedTimeLeft = formatTimeLeft(timeLeft);
-    console.log(formattedTimeLeft);
-
-    // setTimeLeft(timeLeft);
+  const refreshContractData = async () => {
+    await loadContractData(selectedContractKey);
   };
 
   return (
     <ContractContext.Provider value={{
       account,
-      stakeTokens,
-      unstakeTokens,
-      claimRewards,
-      balance,
-      lockPeriod,
-      extendedLockOnRegistration,
-      earlyUnstakeFee,
-      minStakingAmount,
-      maxStakingAmount,
-      status,
-      additionalRewards,
-      totalValueLocked,
-      userLockedTokens,
-      apy,
-      numberOfStakers,
-      timeLeft,
-      stakingContract,
-      tokenContract,
-      handleContractChange,
-      userDetails,
-      getStakingStatus
+  stakeTokens,
+  unstakeTokens,
+  claimRewards,
+  balance,
+  lockPeriod,
+  earlyUnstakeFee,
+  minStakingAmount,
+  maxStakingAmount,
+  status,
+  additionalRewards,
+  totalValueLocked,
+  userLockedTokens,
+  apy,
+  numberOfStakers,
+  timeLeft,
+  stakingContract,
+  tokenContract,
+  handleContractChange,
+  userDetails,
+  getStakingStatus,
+  refreshContractData
     }}>
       {children}
     </ContractContext.Provider>

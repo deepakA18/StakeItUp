@@ -1,6 +1,7 @@
 "use client"
 
 import  React, { useState } from "react";
+import { ethers } from "ethers";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -47,7 +48,8 @@ const Page = () => {
     numberOfStakers,
     timeLeft,
     getStakingStatus,
-    userDetails
+    userDetails,
+    refreshContractData
 
   } = useContract();
 
@@ -63,19 +65,41 @@ const Page = () => {
   const handleStake = async (e) => {
     e.preventDefault();
     try {
-      const stakingStatus = getStakingStatus();
-      if (stakingStatus === 'Staking period ended') {
+      console.log("Current total staked:", ethers.utils.formatEther(totalValueLocked || '0'));
+      console.log("Max staking amount:", ethers.utils.formatEther(maxStakingAmount || '0'));
+      console.log("Attempting to stake:", stakeAmount);
+      if (status?.toString() === 'Staking period ended') {
         throw new Error('Staking period has ended');
       }
-      await stakeTokens(stakeAmount);
+      
+      // Check if staking amount exceeds max limit
+      if (ethers.BigNumber.from(stakeAmount).gt(ethers.BigNumber.from(maxStakingAmount))) {
+        throw new Error('Staking amount exceeds maximum limit');
+      }
+  
+      // Attempt to stake tokens
+      const result = await stakeTokens(stakeAmount);
+      
+      if (result && result.success) {
+        notification.success({
+          message: "Staking successful!",
+          description: `You have staked ${stakeAmount} tokens.`
+        });
+        setStakeAmount('');
+        await refreshContractData();
+      } else {
+        throw new Error(result.error || 'Staking failed');
+      }
     } catch (err) {
-      notification.info(
-        {
-          message: "Staking period has ended!"
-        }
-      )
+      let errorMessage = err.message;
+      if (errorMessage.includes('max staking token limit reached')) {
+        errorMessage = 'Maximum staking token limit has been reached. Unable to stake more tokens at this time.';
+      }
+      notification.error({
+        message: "Staking failed",
+        description: errorMessage
+      });
     }
-    
   };
 
   const handleUnstake = async (e) => {
@@ -100,32 +124,28 @@ const Page = () => {
         <div>
         <ul className="space-y-2">
           <li>
-            <strong>Lock Period:</strong>
-            <span>{lockPeriod?.toString()}</span>
+            <strong>Lock Period: </strong>
+            <span className="font-semibold">{lockPeriod?.toString()}</span>
           </li>
           <li>
-            <strong>Extended Lock on Registration:</strong>
-            <span>{extendedLockOnRegistration?.toString()}</span>
+            <strong>Early Unstake Fee: </strong>
+            <span className="font-semibold">{earlyUnstakeFee?.toString()}</span>
           </li>
           <li>
-            <strong>Early Unstake Fee:</strong>
-            <span>{earlyUnstakeFee?.toString()}</span>
+            <strong>Mini Staking Amount: </strong>
+            <span className="font-semibold">{minStakingAmount.formatted}</span>
           </li>
           <li>
-            <strong>Mini Staking Amount:</strong>
-            <span>{minStakingAmount?.toString()}</span>
+            <strong>Maximum Staking Amount: </strong>
+            <span className="font-semibold">{maxStakingAmount.formatted}</span>
           </li>
           <li>
-            <strong>Maximum Staking Amount:</strong>
-            <span>{maxStakingAmount?.toString()}</span>
+            <strong>Status: </strong>
+            <span className="font-semibold">{status?.toString()}</span>
           </li>
           <li>
-            <strong>Status</strong>
-            <span>{status?.toString()}</span>
-          </li>
-          <li>
-            <strong>Additional Rewards</strong>
-            <span>{additionalRewards?.toString()}</span>
+            <strong>Additional Rewards: </strong>
+            <span className="font-semibold">{additionalRewards.formatted}</span>
           </li>
         
         </ul>
@@ -136,14 +156,14 @@ const Page = () => {
         </div>
         </div>
         <div className="mt-7 text-xl font-semibold">
-          <p>Balance: {balance?.toString()}</p>
+          <p>Balance: {balance.formatted}</p>
         </div>
         <form className="mt-5">
           <div className="grid w-full items-center gap-y-8">
           <div className="flex flex-col space-y-1.5">
               <Select onValueChange={handleSelectChange}>
                 <SelectTrigger id="framework">
-                  <SelectValue placeholder="Staking Period" />
+                  <SelectValue placeholder="7 Days" />
                 </SelectTrigger>
                 <SelectContent position="popper">
                   <SelectItem value="sevenDays">7 Days</SelectItem>
@@ -157,7 +177,7 @@ const Page = () => {
               <Input type="Number" id="stake" placeholder="Amount to Stake" value={stakeAmount}
                   onChange={(e) => setStakeAmount(e.target.value)}/>
               <div className="ml-2">
-              <Button onClick={handleStake}>Stake</Button>
+              <Button onClick={handleStake} >Stake</Button>
               </div>
               
             </div>
@@ -186,11 +206,11 @@ const Page = () => {
     <div className="ml-28">
         <div className="mt-10 w-80">
           <div className=" bg-indigo-600 text-white rounded-xl p-8 mb-7 w-full text-center">
-            <h3 className="text-2xl font-medium">{totalValueLocked?.toString()}</h3>
+            <h3 className="text-2xl font-medium">{totalValueLocked.formatted}</h3>
             <p className="mt-2">Total Value Locked</p>
           </div>
           <div className="bg-indigo-600 text-white rounded-xl p-8 mb-7 w-full text-center">
-            <h3 className="text-2xl font-medium">{userDetails.stakeAmount?.toString()}</h3>
+            <h3 className="text-2xl font-medium">{userDetails.stakeAmount ? userDetails.stakeAmount.formatted : "0"}</h3>
             <p className="mt-2">Your Locked Token</p>
           </div>
           <div className="bg-indigo-600 text-white rounded-xl p-8 mb-7 w-full text-center">
