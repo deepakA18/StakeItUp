@@ -141,7 +141,7 @@ const Page = () => {
                 </li>
               </ul>
             </div>
-            <div className="text-3xl font-medium flex md:ml-10 mt-4 md:mt-0">
+            <div className="flex flex-col items-center text-3xl font-medium md:ml-8 mt-4 md:mt-0">
               <span>{apy?.toString()}</span>
               <span className="ml-1">APY*</span>
             </div>
@@ -154,7 +154,7 @@ const Page = () => {
               <div className="flex flex-col space-y-1.5">
                 <Select onValueChange={handleSelectChange}>
                   <SelectTrigger id="framework">
-                    <SelectValue placeholder="Select Period" />
+                    <SelectValue placeholder="7 Days" />
                   </SelectTrigger>
                   <SelectContent position="popper">
                     <SelectItem value="sevenDays">7 Days</SelectItem>
@@ -174,7 +174,7 @@ const Page = () => {
               </div>
               <div className="flex flex-col md:flex-row items-center">
                 {/* <Input type="number" id="reward" placeholder="Amount of Reward" value={rewardAmount} onChange={(e) => setRewardAmount(e.target.value)} className="w-full md:w-auto"/> */}
-                <Button onClick={handleClaimRewards} className="mt-4 md:mt-0 md:ml-2 w-full md:w-auto">Reward</Button>
+                <Button onClick={handleClaimRewards} className="mt-4 md:mt-0 md:ml-2 w-full md:w-auto">Claim Reward</Button>
               </div>
             </div>
           </form>
@@ -183,7 +183,7 @@ const Page = () => {
           {/* Add any footer content here if needed */}
         </CardFooter>
       </Card>
-      <div className="mt-10 md:mt-0 md:ml-10 w-full md:w-1/3">
+      <div className="mt-10 md:mt-10 md:ml-10 w-full md:w-1/3">
         <div className="grid gap-4">
           <div className="bg-indigo-600 text-white rounded-xl p-8 text-center">
             <h3 className="text-2xl font-medium">{totalValueLocked.formatted}</h3>

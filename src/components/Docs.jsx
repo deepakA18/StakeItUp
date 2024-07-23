@@ -9,9 +9,9 @@ const Docs = () => {
   return (
     <div className=''>
       <section className="mt-12 px-4">
-        <AspectRatio ratio={40/16} className='text-white w-full'>
+        <div className='text-white w-full'>
           <div className='flex flex-col items-center mt-14'>
-            <h1 className='text-5xl font-bold text-center'>Discover Our Documentation</h1>
+            <h1 className='text-5xl font-bold text-center sm:text-2xl'>Discover Our Documentation</h1>
             <p className='text-xl font-semibold mt-4 text-center'>Your gateway to stake it up resources</p>
           </div>
           <div className='flex flex-col md:flex-row mt-20 justify-center space-y-8 md:space-y-0 md:space-x-10'>
@@ -30,7 +30,7 @@ const Docs = () => {
               </div>
             </div>
           </div>
-        </AspectRatio>
+        </div>
       </section>
     </div>
   )

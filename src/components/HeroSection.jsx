@@ -6,8 +6,8 @@ import { Button } from './ui/button'
 
 const HeroSection = () => {
   return (
-    <section className="mt-14 px-4 md:px-10">
-      <AspectRatio ratio={40/17} className='bg-white w-full flex flex-col md:flex-row items-center md:justify-between'>
+    <section className="mt-12 px-4 md:px-10">
+      <div className='bg-white p-6 w-full flex flex-col md:flex-row items-center md:justify-between'>
         <div className='mt-10 md:mt-14 md:ml-10 w-full md:w-1/2'>
           <h1 className="text-3xl md:text-5xl font-extrabold leading-tight md:leading-normal">
             Stake Your Tokens
@@ -25,7 +25,7 @@ const HeroSection = () => {
         <div className='w-full md:w-1/2 flex justify-center md:justify-end items-center mt-10 md:mt-0'>
           <Image src="/next.svg" alt="Image" className="rounded-md object-cover w-64 md:w-72 lg:w-80" width={300} height={300}/>
         </div>
-      </AspectRatio>
+      </div>
     </section>
   )
 }

@@ -28,35 +28,36 @@ const Footer = () => {
               </CardContent>
             </Card>
           </div>
-          <div className="flex flex-col sm:flex-row space-y-8 sm:space-y-0 sm:space-x-10">
-            <Card className="bg-transparent text-white border-0">
-              <CardHeader>
-                <h3 className="font-semibold mb-2">Ecosystem</h3>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm">
-                  <li><a href="#">DEX</a></li>
-                  <li><a href="#">Aggregator</a></li>
-                  <li><a href="#">Swap</a></li>
-                  <li><a href="#">Pools</a></li>
-                </ul>
-              </CardContent>
-            </Card>
-            <Card className="bg-transparent text-white border-0">
-              <CardHeader>
-                <h3 className="font-semibold mb-2">Resources</h3>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm">
-                  <li><a href="#">Foundation</a></li>
-                  <li><a href="#">Docs</a></li>
-                  <li><a href="#">Careers</a></li>
-                  <li><a href="#">Blog</a></li>
-                  <li><a href="#">Media kit</a></li>
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
+          <div className="flex flex-row sm:space-x-10 space-y-8 sm:space-y-0">
+  <Card className="bg-transparent text-white border-0">
+    <CardHeader>
+      <h3 className="font-semibold mb-2">Ecosystem</h3>
+    </CardHeader>
+    <CardContent>
+      <ul className="space-y-2 text-sm">
+        <li><a href="#">DEX</a></li>
+        <li><a href="#">Aggregator</a></li>
+        <li><a href="#">Swap</a></li>
+        <li><a href="#">Pools</a></li>
+      </ul>
+    </CardContent>
+  </Card>
+  <Card className="bg-transparent text-white border-0">
+    <CardHeader>
+      <h3 className="font-semibold mb-2">Resources</h3>
+    </CardHeader>
+    <CardContent>
+      <ul className="space-y-2 text-sm">
+        <li><a href="#">Foundation</a></li>
+        <li><a href="#">Docs</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Media kit</a></li>
+      </ul>
+    </CardContent>
+  </Card>
+</div>
+
         </div>
       </div>
       <Separator className="my-8" />

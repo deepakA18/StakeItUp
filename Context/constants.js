@@ -6,13 +6,13 @@ export const STAKING_CONTRACTS = {
         address: "0x648a7E9A6c22d816EA66Dce56e4e3a578D7534C1"
     },
     tenDays: {
-        address: ""
+        address: "0x612Bb3fdC265d9a29b677236d33F8Dcb5516cAAF"
     },
     thirtyDays: {
-        address: ""
+        address: "0xA87f64C683A55884C0B01F59a587fBEf8431EaA2"
     },
     ninetyDays: {
-        address: ""
+        address: "0x015dFf0746620D1a315655d73FA3f72D7ce8719f"
     },
     abi: StakingContract.abi
 }
