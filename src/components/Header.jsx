@@ -77,9 +77,9 @@ const Header = () => {
                 </NavigationMenu>
             </nav>
 
-            <Button variant="outline" className="mt-4 md:mt-0 md:ml-5 w-full md:w-auto"  onClick={handleConnect}
+            <Button variant="outline" className="mt-4 md:mt-0 md:ml-5 w-full md:w-auto md:h-12"  onClick={handleConnect}
                 disabled={isLoading}>
-                {isLoading ? 'Connecting...' : <><RocketIcon className="mr-2 h-4 w-4" />Connect Wallet</>}
+                {isLoading ? 'Connecting...' : <><RocketIcon className="mr-2 h-5 w-5" />Connect Wallet</>}
             </Button>
         </header>
     )
