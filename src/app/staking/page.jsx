@@ -113,7 +113,7 @@ const Page = () => {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col md:flex-row md:justify-between">
-            <div>
+            <div className="text-lg">
               <ul className="space-y-2">
                 <li>
                   <strong>Lock Period: </strong>
@@ -135,16 +135,13 @@ const Page = () => {
                   <strong>Status: </strong>
                   <span className="font-semibold">{status?.toString()}</span>
                 </li>
-                <li>
+                {/* <li>
                   <strong>Additional Rewards: </strong>
                   <span className="font-semibold">{additionalRewards.formatted}</span>
-                </li>
+                </li> */}
               </ul>
             </div>
-            <div className="flex flex-col items-center text-3xl font-medium md:ml-8 mt-4 md:mt-0">
-              <span>{apy?.toString()}</span>
-              <span className="ml-1">APY*</span>
-            </div>
+          
           </div>
           <div className="mt-7 text-xl font-semibold">
             <p>Balance: {balance.formatted}</p>
@@ -165,16 +162,17 @@ const Page = () => {
                 </Select>
               </div>
               <div className="flex flex-col md:flex-row items-center">
-                <Input type="number" id="stake" placeholder="Amount to Stake" value={stakeAmount} onChange={(e) => setStakeAmount(e.target.value)} className="w-full md:w-auto"/>
-                <Button onClick={handleStake} className="mt-4 md:mt-0 md:ml-2 w-full md:w-auto">Stake</Button>
+                <Input type="number" id="stake" placeholder="Amount to Stake" value={stakeAmount} onChange={(e) => setStakeAmount(e.target.value)} className="w-full"/>
+                <Button onClick={handleStake} className="mt-4 md:mt-0 md:ml-2 w-full md:w-28">Stake</Button>
               </div>
               <div className="flex flex-col md:flex-row items-center">
-                <Input type="number" id="withdraw" placeholder="Amount to Withdraw" value={unstakeAmount} onChange={(e) => setUnstakeAmount(e.target.value)} className="w-full md:w-auto"/>
-                <Button onClick={handleUnstake} className="mt-4 md:mt-0 md:ml-2 w-full md:w-auto">Withdraw</Button>
+                <Input type="number" id="withdraw" placeholder="Amount to Withdraw" value={unstakeAmount} onChange={(e) => setUnstakeAmount(e.target.value)} className="w-full"/>
+                <Button onClick={handleUnstake} className="mt-4 md:mt-0 md:ml-2 w-full md:w-28">Withdraw</Button>
               </div>
-              <div className="flex flex-col md:flex-row items-center">
+              <div className="flex flex-col items-center">
                 {/* <Input type="number" id="reward" placeholder="Amount of Reward" value={rewardAmount} onChange={(e) => setRewardAmount(e.target.value)} className="w-full md:w-auto"/> */}
-                <Button onClick={handleClaimRewards} className="mt-4 md:mt-0 md:ml-2 w-full md:w-auto">Claim Reward</Button>
+                <p className="font-semibold text-lg">Additional Rewards: {additionalRewards.formatted}</p>
+                <Button onClick={handleClaimRewards} className="mt-4 md:mt-4 md:ml-2 w-full md:w-full">Claim Reward</Button>
               </div>
             </div>
           </form>

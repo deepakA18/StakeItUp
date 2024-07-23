@@ -1,9 +1,12 @@
 "use client"
 
 import React from 'react'
+import Image from 'next/image';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { GitHubLogoIcon, TwitterLogoIcon, DiscordLogoIcon, LinkedInLogoIcon } from '@radix-ui/react-icons'
+import {RocketIcon} from "@radix-ui/react-icons"
+
 
 const Footer = () => {
   return (
@@ -15,9 +18,9 @@ const Footer = () => {
               <CardHeader>
                 <div className="flex flex-col space-y-4">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center">
-                    <img src="/path-to-your-logo.png" alt="Logo" className="w-8 h-8" />
+                    <RocketIcon className='w-8 h-8'/>
                   </div>
-                  <p className='text-sm md:text-md'>Berachain is a high-performance EVM-compatible blockchain built on Proof-of-Liquidity consensus. Proof-of-Liquidity is a novel consensus mechanism that aims to align network incentives, creating strong synergy between Berachain validators and the ecosystem of projects.</p>
+                  <p className='text-sm md:text-md md:w-full'>StakeitUp is a EVM-compatible token staking platform built on Polygon Amoy, where you stake SHN tokens to gain the highest yield among entire DeFi ecosystem.</p>
                 </div>
               </CardHeader>
               <CardContent className="flex space-x-4 mt-4">
