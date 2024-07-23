@@ -43,6 +43,7 @@ export const ContractProvider = ({ children }) => {
     lastRewardCalculationTime: null,
     rewardsClaimedSoFar: null,
   });
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
 
   const formatLargeNumber = (value, decimals = 18) => {
     if (!value) return "0";
@@ -75,31 +76,55 @@ export const ContractProvider = ({ children }) => {
     }
   };
 
+  const handleConnectWallet = async () => {
+    try {
+        setIsLoading(true);
+        const connectedAccount = await CheckIfWalletConnected();
+        if (!connectedAccount) return;
+
+        const web3modal = new Web3Modal();
+        const connection = await web3modal.connect();
+        const provider = new ethers.providers.Web3Provider(connection);
+        const network = await provider.getNetwork();
+
+        if (network.chainId === 80002) {
+            setAccount(connectedAccount);
+            setProvider(provider);
+            setIsWalletConnected(true); // Set wallet connection status
+
+            // Load contract data only after successful connection
+        } else {
+          notification.error({
+            message: 'Network Error',
+            description: 'Please connect to the Polygon Amoy.',
+          });
+          return;
+        }
+    } catch (error) {
+        console.error("Error connecting to wallet:", error);
+    } finally {
+        setIsLoading(false);
+    }
+};
+
+
   const loadContractData = async (contractKey) => {
+    if(!isWalletConnected) return;
     setIsLoading(true);
     try {
-      const connectedAccount = await CheckIfWalletConnected();
-      console.log("account", connectedAccount);
-      const web3modal = new Web3Modal();
-      const connection = await web3modal.connect();
-      const provider = new ethers.providers.Web3Provider(connection);
-      const network = await provider.getNetwork();
       
-      if (network.chainId === 80002 && connectedAccount) {
-        setAccount(connectedAccount);
-        setProvider(provider);
-
         const tokenContract = await connectingNativeTokenContract();
         console.log("Token Contract", tokenContract);
         setTokenContract(tokenContract);
-        const balance = await tokenContract.balanceOf(connectedAccount);
+        const balance = await tokenContract.balanceOf(account);
+        console.log(account)
         setBalance({ raw: balance, formatted: formatLargeNumber(balance) });
 
         const stakingContract = await connectingWithContract(contractKey);
         setStakingContract(stakingContract);
         console.log("Staking contract", stakingContract);
 
-        const user = await stakingContract.getUser(connectedAccount);
+        const user = await stakingContract.getUser(account);
         setUserDetails({
           stakeAmount: { raw: user.stakeAmount, formatted: formatLargeNumber(user.stakeAmount) },
           rewardAmount: { raw: user.rewardAmount, formatted: formatLargeNumber(user.rewardAmount) },
@@ -156,13 +181,7 @@ export const ContractProvider = ({ children }) => {
 
         const status = getStakingStatus(startDate,endDate);
         setStatus(status);
-      } else {
-        notification.error({
-          message: 'Network Error',
-          description: 'Please connect to the Polygon Amoy.',
-        });
-        return;
-      }
+
     } catch (error) {
       console.error(error);
       setIsLoading(false);
@@ -170,8 +189,10 @@ export const ContractProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    loadContractData(selectedContractKey);
-  }, [selectedContractKey]);
+    if (isWalletConnected && selectedContractKey) {
+      loadContractData(selectedContractKey);
+    }
+  }, [selectedContractKey,isWalletConnected]);
 
   useEffect(() => {
     console.log("endDate changed:", endDate ? endDate.toString() : "null");
@@ -271,6 +292,7 @@ export const ContractProvider = ({ children }) => {
 
   return (
     <ContractContext.Provider value={{
+      
       account,
   stakeTokens,
   unstakeTokens,
@@ -292,7 +314,8 @@ export const ContractProvider = ({ children }) => {
   handleContractChange,
   userDetails,
   getStakingStatus,
-  refreshContractData
+  refreshContractData,
+  handleConnectWallet
     }}>
       {children}
     </ContractContext.Provider>

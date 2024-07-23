@@ -8,7 +8,6 @@ import Footer from "@/components/Footer";
 
 import { ContractProvider } from "../../Context";
 
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -20,14 +19,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Header />
-        <HeroSection/>
         <ContractProvider>
-        {children}
+          <Header />
+          <HeroSection />
+          {children}
+          <Docs />
+          <Footer />
         </ContractProvider>
-        <Docs />
-        <Footer />
-        </body>
+      </body>
     </html>
   );
 }

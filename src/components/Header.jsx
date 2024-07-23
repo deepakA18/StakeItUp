@@ -1,8 +1,8 @@
 "use client"
 
-import * as React from 'react'
+import  React from 'react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import Image from 'next/image'
 import logo from '../../public/logo.png'
 
@@ -16,13 +16,22 @@ import {
 import { Button } from "@/components/ui/button"
 import { RocketIcon } from '@radix-ui/react-icons'
 import { TextAlignJustifyIcon, Cross1Icon } from '@radix-ui/react-icons'
+import {useContract } from '../../Context/index'
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
 
+    const { handleConnectWallet, isLoading } = useContract()
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen)
     }
+
+    const handleConnect = async (e) => {
+        e.preventDefault();
+        await handleConnectWallet();
+      };
+    
+
 
     return (
         <header className='flex flex-col md:flex-row items-center text-white p-4'>
@@ -68,8 +77,9 @@ const Header = () => {
                 </NavigationMenu>
             </nav>
 
-            <Button variant="outline" className="mt-4 md:mt-0 md:ml-5 w-full md:w-auto">
-                <RocketIcon className="mr-2 h-4 w-4" />Connect Wallet
+            <Button variant="outline" className="mt-4 md:mt-0 md:ml-5 w-full md:w-auto"  onClick={handleConnect}
+                disabled={isLoading}>
+                {isLoading ? 'Connecting...' : <><RocketIcon className="mr-2 h-4 w-4" />Connect Wallet</>}
             </Button>
         </header>
     )

@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
 import { STAKING_CONTRACTS, ERC20Token_ABI, ERC20Token_ADDRESS } from "../Context/constants";
+import { notification } from "antd";
 
 export const CheckIfWalletConnected = async () => {
   try {
@@ -48,6 +49,7 @@ export const connectingWithContract = async (contractKey) => {
     const signer = provider.getSigner();
 
     const { address } = STAKING_CONTRACTS[contractKey];
+    console.log("address", address)
     const contract = fetchContract(address, STAKING_CONTRACTS.abi, signer);
     
     return contract;

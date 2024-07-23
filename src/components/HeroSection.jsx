@@ -6,7 +6,7 @@ import { Button } from './ui/button'
 
 const HeroSection = () => {
   return (
-    <section className="mt-12 px-4 md:px-10">
+    <section className="mt-12 px-4 md:px-10 ">
       <div className='bg-white p-6 w-full flex flex-col md:flex-row items-center md:justify-between'>
         <div className='mt-10 md:mt-14 md:ml-10 w-full md:w-1/2'>
           <h1 className="text-3xl md:text-5xl font-extrabold leading-tight md:leading-normal">
