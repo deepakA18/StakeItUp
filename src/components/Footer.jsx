@@ -31,7 +31,7 @@ const Footer = () => {
               </CardContent>
             </Card>
           </div>
-          <div className="flex flex-row sm:space-x-10 space-y-8 sm:space-y-0">
+          <div className="flex flex-row sm:space-x-10 space-y-0 sm:space-y-0">
   <Card className="bg-transparent text-white border-0">
     <CardHeader>
       <h3 className="font-semibold mb-2">Ecosystem</h3>

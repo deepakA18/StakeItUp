@@ -22,5 +22,4 @@ export const ERC20Token_ABI = ERC20Token.abi;
 export const ERC20Token_BYTECODE = ERC20Token.bytecode;
 
 // console.log("ERC20Token_ABI:", ERC20Token_ABI);
-console.log("ERC20Token_ADDRESS:", ERC20Token_ADDRESS);
-console.log("StakingContracts:", STAKING_CONTRACTS);
+

@@ -4,9 +4,15 @@ import React from 'react'
 import Image from 'next/image'
 import { Button } from './ui/button'
 import hero from "../../public/hero.png"
-import {CubeIcon} from "@radix-ui/react-icons"
+import { useRouter } from 'next/navigation'
 
 const HeroSection = () => {
+
+  const router = useRouter();
+
+  const handleStakeTokensClick = () => {
+    router.push('/staking'); // Change '/staking' to the actual route of your staking page
+  }
   return (
     <section className="mt-4 px-4 md:px-10 text-white">
       <div className='p-4 w-full flex flex-col md:flex-row items-center md:justify-between'>
@@ -20,7 +26,7 @@ const HeroSection = () => {
             Stake tokens, add liquidity,<br/> hold, and earn rewards
           </p>
           <div className='flex flex-row mt-6 md:mt-10 space-x-4 md:space-x-8 '>
-            <Button className="px-4 md:px-6 py-3 md:py-7 text-base md:text-lg bg-white text-black font-semibold hover:bg-gray-400">Stake Tokens</Button>
+            <Button className="px-4 md:px-6 py-3 md:py-7 text-base md:text-lg bg-white text-black font-semibold hover:bg-gray-400" onClick={handleStakeTokensClick}>Stake Tokens</Button>
             <Button className="px-4 md:px-6 py-3 md:py-7 text-base md:text-lg bg-indigo-600 hover:bg-indigo-900">View Pools</Button>
           </div>
         </div>
