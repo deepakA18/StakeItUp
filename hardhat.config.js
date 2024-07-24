@@ -2,8 +2,8 @@ require("@nomicfoundation/hardhat-toolbox");
 
 /** @type import('hardhat/config').HardhatUserConfig */
  
-const NEXT_PUBLIC_RPC_URL = process.env.NEXT_PUBLIC_RPC_URL;   
-const NEXT_PUBLIC_PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY;
+const NEXT_PUBLIC_RPC_URL = "https://rpc-amoy.polygon.technology/";   
+const NEXT_PUBLIC_PRIVATE_KEY = "a8809b40c030628ad29be1febd1bc3b29a2298837699837d8bb9e97004a93b17f";
 module.exports = {
   solidity: "0.8.24",
   defaultNetwork: "Polygon Amoy",
