@@ -14,6 +14,9 @@ export const CheckIfWalletConnected = async () => {
     return accounts[0];
   } catch (error) {
     console.log(error);
+    notification.error({
+      message: "Wallet not found!"
+    })
   }
 };
 
@@ -28,6 +31,9 @@ export const connectWallet = async () => {
     return accounts[0];
   } catch (error) {
     console.log(error);
+    notification.error({
+      message:"Error Connecting Wallet!"
+    })
   }
 };
 
