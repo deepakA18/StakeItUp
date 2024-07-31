@@ -216,19 +216,20 @@ export const ContractProvider = ({ children }) => {
   };
 
   const stakeTokens = async (amount) => {
-    if (stakingContract) {
+    if (stakingContract && tokenContract) {
       try {
-        await approveTokenSpend(amount);
-        console.log("SC",stakingContract)
-        const tx = await stakingContract.stake(ethers.utils.parseUnits(amount, 18));
-        await tx.wait();
-        saveTransaction('stake', amount);
+        // First, approve the staking contract to spend tokens
+        const amountToApprove = ethers.utils.parseUnits(amount, 18); // Adjust 18 if your token uses a different number of decimals
+        const approveTx = await tokenContract.approve(stakingContract.address, amountToApprove);
+        await approveTx.wait();
+  
+        // Then stake the tokens
+        const stakeTx = await stakingContract.stake(amountToApprove);
+        await stakeTx.wait();
+  
         return { success: true };
       } catch (error) {
         console.error("Staking error:", error);
-        if (error.message.includes('max staking token limit reached')) {
-          return { success: false, error: 'Maximum staking token limit has been reached.' };
-        }
         return { success: false, error: error.message };
       }
     }
