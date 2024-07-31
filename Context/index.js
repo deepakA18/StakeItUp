@@ -79,7 +79,7 @@ export const ContractProvider = ({ children }) => {
   const handleConnectWallet = async () => {
     try {
         setIsLoading(true);
-        const connectedAccount = await CheckIfWalletConnected();
+        const connectedAccount = await connectWallet();
         if (!connectedAccount) return;
 
         const web3modal = new Web3Modal();
@@ -219,6 +219,7 @@ export const ContractProvider = ({ children }) => {
     if (stakingContract) {
       try {
         await approveTokenSpend(amount);
+        console.log("SC",stakingContract)
         const tx = await stakingContract.stake(ethers.utils.parseUnits(amount, 18));
         await tx.wait();
         saveTransaction('stake', amount);

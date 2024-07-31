@@ -57,15 +57,20 @@ const Page = () => {
   const handleStake = async (e) => {
     e.preventDefault();
     try {
-      console.log("Current total staked:", ethers.utils.formatEther(totalValueLocked || '0'));
-      console.log("Max staking amount:", ethers.utils.formatEther(maxStakingAmount || '0'));
+      console.log("Current total staked:", totalValueLocked.formatted);
+      console.log("Max staking amount:", maxStakingAmount.formatted);
       console.log("Attempting to stake:", stakeAmount);
+  
       if (status?.toString() === 'Staking period ended') {
         throw new Error('Staking period has ended');
       }
       
+      // Convert stakeAmount and maxStakingAmount to BigNumber
+      const stakeAmountBN = ethers.utils.parseUnits(stakeAmount, 18);
+      const maxStakingAmountBN = maxStakingAmount.raw;
+  
       // Check if staking amount exceeds max limit
-      if (ethers.BigNumber.from(stakeAmount).gt(ethers.BigNumber.from(maxStakingAmount))) {
+      if (stakeAmountBN.gt(maxStakingAmountBN)) {
         throw new Error('Staking amount exceeds maximum limit');
       }
   
@@ -91,6 +96,7 @@ const Page = () => {
         message: "Staking failed",
         description: errorMessage
       });
+      console.log(err)
     }
   };
 

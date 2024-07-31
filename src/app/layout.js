@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 
 import { ContractProvider } from "../../Context";
 
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -23,7 +24,9 @@ export default function RootLayout({ children }) {
         <ContractProvider>
           <Header />
           <HeroSection />
+          
           {children}
+          
           <Docs />
           <Footer />
         </ContractProvider>
